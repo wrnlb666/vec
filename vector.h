@@ -13,8 +13,6 @@ typedef struct vec_meta
 } vec_meta;
 
 
-
-
 #ifndef VECTOR_IMPLEMENTATION
 #define using_vector( T )                                                                                   \
 T* vec_new_##T( size_t size, T val );                                                                       \
@@ -34,13 +32,92 @@ void vec_destroy_##T( T* arr );                                                 
 
 
 // use `_Generic` keyword from C11 to wrap all of the function above
+// the following example shows how to use this library with { int, char, double } vectors
+// copy, paste, and modify them for easy use. 
 /*
+
+using_vector(int)
+using_vector(char)
+using_vector(double)
+
 #define vec_resize( arr, size, val ) _Generic( (arr),                                                       \
     int*:       vec_resize_int,                                                                             \
     char*:      vec_resize_char,                                                                            \
-    float*:     vec_resize_float,                                                                           \
     double*:    vec_resize_double                                                                           \
-)( arr, size, val )                                                                                         \
+) ( arr, size, val )                                                                                        \
+
+#define vec_clear( arr ) _Generic( (arr),                                                                   \
+    int*:       vec_clear_int,                                                                              \
+    char*:      vec_clear_char,                                                                             \
+    double*:    vec_clear_double                                                                            \
+) ( arr )                                                                                                   \
+
+#define vec_assign( arr, size, val ) _Generic( (arr),                                                       \
+    int*:       vec_assign_int,                                                                             \
+    char*:      vec_assign_char,                                                                            \
+    double*:    vec_assign_double                                                                           \
+) ( arr, size, val )                                                                                        \
+
+#define vec_back( arr ) _Generic( (arr),                                                                    \
+    int*:       vec_back_int,                                                                               \
+    char*:      vec_back_char,                                                                              \
+    double*:    vec_back_double                                                                             \
+) ( arr, size, val )                                                                                        \
+
+#define vec_shrink_to_fit( arr ) _Generic( (arr),                                                           \
+    int*:       vec_shrink_to_fit_int,                                                                      \
+    char*:      vec_shrink_to_fit_char,                                                                     \
+    double*:    vec_shrink_to_fit_double                                                                    \
+) ( arr )                                                                                                   \
+
+#define vec_reserve( arr, size ) _Generic( (arr),                                                           \
+    int*:       vec_reserve_int,                                                                            \
+    char*:      vec_reserve_char,                                                                           \
+    double*:    vec_reserve_double                                                                          \
+) ( arr, size )                                                                                             \
+
+#define vec_insert( arr, position, val ) _Generic( (arr),                                                   \
+    int*:       vec_insert_int,                                                                             \
+    char*:      vec_insert_char,                                                                            \
+    double*:    vec_insert_double                                                                           \
+) ( arr, position, val )                                                                                    \
+
+#define vec_insert_arr( arr, position, array, size ) _Generic( (arr),                                       \
+    int*:       vec_insert_arr_int,                                                                         \
+    char*:      vec_insert_arr_char,                                                                        \
+    double*:    vec_insert_arr_double                                                                       \
+) ( arr, position, array, size )                                                                            \
+
+#define vec_push_back( arr, val ) _Generic( (arr),                                                          \
+    int*:       vec_push_back_int,                                                                          \
+    char*:      vec_push_back_char,                                                                         \
+    double*:    vec_push_back_double                                                                        \
+) ( arr, position, array, size )                                                                            \
+
+#define vec_pop_back( arr ) _Generic( (arr),                                                                \
+    int*:       vec_pop_back_int,                                                                           \
+    char*:      vec_pop_back_char,                                                                          \
+    double*:    vec_pop_back_double                                                                         \
+) ( arr )                                                                                                   \
+
+#define vec_size( arr ) _Generic( (arr),                                                                    \
+    int*:       vec_size_int,                                                                               \
+    char*:      vec_size_char,                                                                              \
+    double*:    vec_size_double                                                                             \
+) ( arr )                                                                                                   \
+
+#define vec_capacity( arr ) _Generic( (arr),                                                                \
+    int*:       vec_capacity_int,                                                                           \
+    char*:      vec_capacity_char,                                                                          \
+    double*:    vec_capacity_double                                                                         \
+) ( arr )                                                                                                   \
+
+#define vec_destroy( arr ) _Generic( (arr),                                                                 \
+    int*:       vec_destroy_int,                                                                            \
+    char*:      vec_destroy_char,                                                                           \
+    double*:    vec_destroy_double                                                                          \
+) ( arr )                                                                                                   \
+
 */
 
 
@@ -59,9 +136,24 @@ T* vec_new_##T( size_t size, T val )                                            
     size_t cap;                                                                                             \
     if ( size < 16 ) cap = 16;                                                                              \
     else cap = size;                                                                                        \
-    vec_meta* vector = malloc( sizeof ( vec_meta ) + sizeof ( T ) * cap );                                  \
+    vec_meta* vector = malloc( sizeof ( vec_meta ) );                                                       \
     vector->size = size;                                                                                    \
-    vector->capacity = cap;                                                                                 \
+    vector->capacity = 16;                                                                                  \
+    if ( cap > vector->capacity )                                                                           \
+    {                                                                                                       \
+        while ( vector->capacity < cap )                                                                    \
+        {                                                                                                   \
+            if ( vector->capacity <= 1024 )                                                                 \
+            {                                                                                               \
+                vector->capacity *= 2;                                                                      \
+            }                                                                                               \
+            else                                                                                            \
+            {                                                                                               \
+                vector->capacity += 512;                                                                    \
+            }                                                                                               \
+        }                                                                                                   \
+    }                                                                                                       \
+    vector = realloc( vector, sizeof ( vec_meta ) + sizeof (T) * vector->capacity );                        \
     T* data = (void*) ( (char*) vector + sizeof ( vec_meta ) );                                             \
     for ( size_t i = 0; i < size; i++ )                                                                     \
     {                                                                                                       \
@@ -72,7 +164,7 @@ T* vec_new_##T( size_t size, T val )                                            
 /* get the address for vec_meta */                                                                          \
 static inline vec_meta* vec_get_meta_##T( T* arr )                                                          \
 {                                                                                                           \
-    return (void*) ( (char*) arr - sizeof ( vec_meta ) );                                                   \
+    return (vec_meta*) ( (char*) arr - sizeof ( vec_meta ) );                                               \
 }                                                                                                           \
 /* change vector to specific size */                                                                        \
 T* vec_resize_##T( T* arr, size_t size, T val )                                                             \
