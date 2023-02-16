@@ -16,19 +16,19 @@ typedef struct vec_meta
 #ifndef VECTOR_IMPLEMENTATION
 #define using_vector( T )                                                                                   \
 T* vec_new_##T( size_t size, T val );                                                                       \
-T* vec_resize_##T( T* arr, size_t size, T val );                                                            \
-T* vec_clear_##T( T* arr );                                                                                 \
-T* vec_assign_##T( T* arr, size_t size, T val );                                                            \
-T* vec_back_##T( T* arr );                                                                                  \
-T* vec_shrink_to_fit_##T( T* arr );                                                                         \
-T* vec_reserve_##T( T* arr, size_t size );                                                                  \
-T* vec_insert_##T( T* arr, size_t position, T val );                                                        \
-T* vec_insert_arr_##T( T* arr, size_t position, T* array, size_t size );                                    \
-T* vec_push_back_##T( T* arr, T val );                                                                      \
-T* vec_pop_back_##T( T* arr );                                                                              \
-size_t vec_size_##T( T* arr );                                                                              \
-size_t vec_capacity_##T( T* arr );                                                                          \
-void vec_destroy_##T( T* arr );                                                                             \
+T* vec_resize_##T( T* self, size_t size, T val );                                                           \
+T* vec_clear_##T( T* self );                                                                                \
+T* vec_assign_##T( T* self, size_t size, T val );                                                           \
+T* vec_back_##T( T* self );                                                                                 \
+T* vec_shrink_to_fit_##T( T* self );                                                                        \
+T* vec_reserve_##T( T* self, size_t size );                                                                 \
+T* vec_insert_##T( T* self, size_t position, T val );                                                       \
+T* vec_insert_arr_##T( T* self, size_t position, T* arr, size_t size );                                     \
+T* vec_push_back_##T( T* self, T val );                                                                     \
+T* vec_pop_back_##T( T* self );                                                                             \
+size_t vec_size_##T( T* self );                                                                             \
+size_t vec_capacity_##T( T* self );                                                                         \
+void vec_destroy_##T( T* self );                                                                            \
 
 
 // use `_Generic` keyword from C11 to wrap all of the function above
@@ -40,83 +40,83 @@ using_vector(int)
 using_vector(char)
 using_vector(double)
 
-#define vec_resize( arr, size, val ) _Generic( (arr),                                                       \
+#define vec_resize( self, size, val ) _Generic( (self),                                                     \
     int*:       vec_resize_int,                                                                             \
     char*:      vec_resize_char,                                                                            \
     double*:    vec_resize_double                                                                           \
-) ( arr, size, val )                                                                                        \
+) ( self, size, val )                                                                                       \
 
-#define vec_clear( arr ) _Generic( (arr),                                                                   \
+#define vec_clear( self ) _Generic( (self),                                                                 \
     int*:       vec_clear_int,                                                                              \
     char*:      vec_clear_char,                                                                             \
     double*:    vec_clear_double                                                                            \
-) ( arr )                                                                                                   \
+) ( self )                                                                                                  \
 
-#define vec_assign( arr, size, val ) _Generic( (arr),                                                       \
+#define vec_assign( self, size, val ) _Generic( (self),                                                     \
     int*:       vec_assign_int,                                                                             \
     char*:      vec_assign_char,                                                                            \
     double*:    vec_assign_double                                                                           \
-) ( arr, size, val )                                                                                        \
+) ( self, size, val )                                                                                       \
 
-#define vec_back( arr ) _Generic( (arr),                                                                    \
+#define vec_back( self ) _Generic( (self),                                                                  \
     int*:       vec_back_int,                                                                               \
     char*:      vec_back_char,                                                                              \
     double*:    vec_back_double                                                                             \
-) ( arr, size, val )                                                                                        \
+) ( self, size, val )                                                                                       \
 
-#define vec_shrink_to_fit( arr ) _Generic( (arr),                                                           \
+#define vec_shrink_to_fit( self ) _Generic( (self),                                                         \
     int*:       vec_shrink_to_fit_int,                                                                      \
     char*:      vec_shrink_to_fit_char,                                                                     \
     double*:    vec_shrink_to_fit_double                                                                    \
-) ( arr )                                                                                                   \
+) ( self )                                                                                                  \
 
-#define vec_reserve( arr, size ) _Generic( (arr),                                                           \
+#define vec_reserve( self, size ) _Generic( (self),                                                         \
     int*:       vec_reserve_int,                                                                            \
     char*:      vec_reserve_char,                                                                           \
     double*:    vec_reserve_double                                                                          \
-) ( arr, size )                                                                                             \
+) ( self, size )                                                                                            \
 
-#define vec_insert( arr, position, val ) _Generic( (arr),                                                   \
+#define vec_insert( self, position, val ) _Generic( (self),                                                 \
     int*:       vec_insert_int,                                                                             \
     char*:      vec_insert_char,                                                                            \
     double*:    vec_insert_double                                                                           \
-) ( arr, position, val )                                                                                    \
+) ( self, position, val )                                                                                   \
 
-#define vec_insert_arr( arr, position, array, size ) _Generic( (arr),                                       \
+#define vec_insert_arr( self, position, arr, size ) _Generic( (self),                                       \
     int*:       vec_insert_arr_int,                                                                         \
     char*:      vec_insert_arr_char,                                                                        \
     double*:    vec_insert_arr_double                                                                       \
-) ( arr, position, array, size )                                                                            \
+) ( self, position, arr, size )                                                                             \
 
-#define vec_push_back( arr, val ) _Generic( (arr),                                                          \
+#define vec_push_back( self, val ) _Generic( (self),                                                        \
     int*:       vec_push_back_int,                                                                          \
     char*:      vec_push_back_char,                                                                         \
     double*:    vec_push_back_double                                                                        \
-) ( arr, position, array, size )                                                                            \
+) ( self, val )                                                                                             \
 
-#define vec_pop_back( arr ) _Generic( (arr),                                                                \
+#define vec_pop_back( self ) _Generic( (self),                                                              \
     int*:       vec_pop_back_int,                                                                           \
     char*:      vec_pop_back_char,                                                                          \
     double*:    vec_pop_back_double                                                                         \
-) ( arr )                                                                                                   \
+) ( self )                                                                                                  \
 
-#define vec_size( arr ) _Generic( (arr),                                                                    \
+#define vec_size( self ) _Generic( (self),                                                                  \
     int*:       vec_size_int,                                                                               \
     char*:      vec_size_char,                                                                              \
     double*:    vec_size_double                                                                             \
-) ( arr )                                                                                                   \
+) ( self )                                                                                                  \
 
-#define vec_capacity( arr ) _Generic( (arr),                                                                \
+#define vec_capacity( self ) _Generic( (self),                                                              \
     int*:       vec_capacity_int,                                                                           \
     char*:      vec_capacity_char,                                                                          \
     double*:    vec_capacity_double                                                                         \
-) ( arr )                                                                                                   \
+) ( self )                                                                                                  \
 
-#define vec_destroy( arr ) _Generic( (arr),                                                                 \
+#define vec_destroy( self ) _Generic( (self),                                                               \
     int*:       vec_destroy_int,                                                                            \
     char*:      vec_destroy_char,                                                                           \
     double*:    vec_destroy_double                                                                          \
-) ( arr )                                                                                                   \
+) ( self )                                                                                                  \
 
 */
 
@@ -162,14 +162,14 @@ T* vec_new_##T( size_t size, T val )                                            
     return data;                                                                                            \
 }                                                                                                           \
 /* get the address for vec_meta */                                                                          \
-static inline vec_meta* vec_get_meta_##T( T* arr )                                                          \
+static inline vec_meta* vec_get_meta_##T( T* self )                                                         \
 {                                                                                                           \
-    return (vec_meta*) ( (char*) arr - sizeof ( vec_meta ) );                                               \
+    return (vec_meta*) ( (char*) self - sizeof ( vec_meta ) );                                              \
 }                                                                                                           \
 /* change vector to specific size */                                                                        \
-T* vec_resize_##T( T* arr, size_t size, T val )                                                             \
+T* vec_resize_##T( T* self, size_t size, T val )                                                            \
 {                                                                                                           \
-    vec_meta* vector = vec_get_meta_##T( arr );                                                             \
+    vec_meta* vector = vec_get_meta_##T( self );                                                            \
     size_t cap;                                                                                             \
     if ( size < 16 ) cap = 16;                                                                              \
     else cap = size;                                                                                        \
@@ -187,10 +187,10 @@ T* vec_resize_##T( T* arr, size_t size, T val )                                 
             }                                                                                               \
         }                                                                                                   \
         vector = realloc( vector, sizeof ( vec_meta ) + sizeof ( T ) * vector->capacity );                  \
-        arr = (void*) ( (char*) vector + sizeof ( vec_meta ) );                                             \
+        self = (void*) ( (char*) vector + sizeof ( vec_meta ) );                                            \
         for ( size_t i = vector->size; i < size; i++ )                                                      \
         {                                                                                                   \
-            arr[i] = val;                                                                                   \
+            self[i] = val;                                                                                  \
         }                                                                                                   \
         vector->size = size;                                                                                \
     }                                                                                                       \
@@ -213,26 +213,26 @@ T* vec_resize_##T( T* arr, size_t size, T val )                                 
             else break;                                                                                     \
         }                                                                                                   \
         vector = realloc( vector, sizeof ( vec_meta ) + sizeof ( T ) * vector->capacity );                  \
-        arr = (void*) ( (char*) vector + sizeof ( vec_meta ) );                                             \
+        self = (void*) ( (char*) vector + sizeof ( vec_meta ) );                                            \
         vector->size = size;                                                                                \
     }                                                                                                       \
-    return arr;                                                                                             \
+    return self;                                                                                            \
 }                                                                                                           \
 /* clear, remove all elements in the vector, may not reallocate */                                          \
-T* vec_clear_##T( T* arr )                                                                                  \
+T* vec_clear_##T( T* self )                                                                                 \
 {                                                                                                           \
-    vec_meta* vector = vec_get_meta_##T( arr );                                                             \
+    vec_meta* vector = vec_get_meta_##T( self );                                                            \
     vector->size = 0;                                                                                       \
     vector->capacity = 16;                                                                                  \
     vector = realloc( vector, sizeof ( vec_meta ) + sizeof ( T ) * vector->capacity );                      \
-    arr = (void*) ( (char*) vector + sizeof ( vec_meta ) );                                                 \
-    memset( arr, 0, sizeof (T) * vector->capacity );                                                        \
-    return arr;                                                                                             \
+    self = (void*) ( (char*) vector + sizeof ( vec_meta ) );                                                \
+    memset( self, 0, sizeof (T) * vector->capacity );                                                       \
+    return self;                                                                                            \
 }                                                                                                           \
 /* Assigns new contents to the vector and modifying its size accordingly */                                 \
-T* vec_assign_##T( T* arr, size_t size, T val )                                                             \
+T* vec_assign_##T( T* self, size_t size, T val )                                                            \
 {                                                                                                           \
-    vec_meta* vector = vec_get_meta_##T( arr );                                                             \
+    vec_meta* vector = vec_get_meta_##T( self );                                                            \
     size_t cap;                                                                                             \
     if ( size < 16 ) cap = 16;                                                                              \
     else cap = size;                                                                                        \
@@ -250,10 +250,10 @@ T* vec_assign_##T( T* arr, size_t size, T val )                                 
             }                                                                                               \
         }                                                                                                   \
         vector = realloc( vector, sizeof ( vec_meta ) + sizeof ( T ) * vector->capacity );                  \
-        arr = (void*) ( (char*) vector + sizeof ( vec_meta ) );                                             \
+        self = (void*) ( (char*) vector + sizeof ( vec_meta ) );                                            \
         for ( size_t i = 0; i < size; i++ )                                                                 \
         {                                                                                                   \
-            arr[i] = val;                                                                                   \
+            self[i] = val;                                                                                  \
         }                                                                                                   \
         vector->size = size;                                                                                \
     }                                                                                                       \
@@ -276,59 +276,59 @@ T* vec_assign_##T( T* arr, size_t size, T val )                                 
             else break;                                                                                     \
         }                                                                                                   \
         vector = realloc( vector, sizeof ( vec_meta ) + sizeof ( T ) * vector->capacity );                  \
-        arr = (void*) ( (char*) vector + sizeof ( vec_meta ) );                                             \
+        self = (void*) ( (char*) vector + sizeof ( vec_meta ) );                                            \
         for ( size_t i = 0; i < size; i++ )                                                                 \
         {                                                                                                   \
-            arr[i] = val;                                                                                   \
+            self[i] = val;                                                                                  \
         }                                                                                                   \
         vector->size = size;                                                                                \
     }                                                                                                       \
-    return arr;                                                                                             \
+    return self;                                                                                            \
 }                                                                                                           \
 /* get the reference of the first item */                                                                   \
-T* vec_front_##T( T* arr )                                                                                  \
+T* vec_front_##T( T* self )                                                                                 \
 {                                                                                                           \
-    vec_meta *vector = vec_get_meta_##T( arr );                                                             \
-    if ( vector->size > 0 ) return arr;                                                                     \
+    vec_meta *vector = vec_get_meta_##T( self );                                                            \
+    if ( vector->size > 0 ) return self;                                                                    \
     else return NULL;                                                                                       \
 }                                                                                                           \
 /* get the reference of the last item */                                                                    \
-T* vec_back_##T( T* arr )                                                                                   \
+T* vec_back_##T( T* self )                                                                                  \
 {                                                                                                           \
-    vec_meta *vector = vec_get_meta_##T( arr );                                                             \
-    if ( vector->size > 0 ) return &arr[ vector->size - 1 ];                                                \
+    vec_meta *vector = vec_get_meta_##T( self );                                                            \
+    if ( vector->size > 0 ) return &self[ vector->size - 1 ];                                               \
     else return NULL;                                                                                       \
 }                                                                                                           \
 /* Returns the number of elements in the vector */                                                          \
-size_t vec_size_##T( T* arr )                                                                               \
+size_t vec_size_##T( T* self )                                                                              \
 {                                                                                                           \
-    vec_meta *vector = vec_get_meta_##T( arr );                                                             \
+    vec_meta *vector = vec_get_meta_##T( self );                                                            \
     return vector->size;                                                                                    \
 }                                                                                                           \
 /* get the allocated size for the vector in terms of elements */                                            \
-size_t vec_capacity_##T( T* arr )                                                                           \
+size_t vec_capacity_##T( T* self )                                                                          \
 {                                                                                                           \
-    vec_meta *vector = vec_get_meta_##T( arr );                                                             \
+    vec_meta *vector = vec_get_meta_##T( self );                                                            \
     return vector->capacity;                                                                                \
 }                                                                                                           \
 /* Requests the container to reduce its capacity to fit its size */                                         \
-T* vec_shrink_to_fit_##T( T* arr )                                                                          \
+T* vec_shrink_to_fit_##T( T* self )                                                                         \
 {                                                                                                           \
-    return vec_resize_##T( arr, vec_size_##T(arr), 0 );                                                     \
+    return vec_resize_##T( self, vec_size_##T(self), 0 );                                                   \
 }                                                                                                           \
 /* Requests that the vector capacity be at least enough to contain size elements */                         \
-T* vec_reserve_##T( T* arr, size_t size )                                                                   \
+T* vec_reserve_##T( T* self, size_t size )                                                                  \
 {                                                                                                           \
-    if ( size <= vec_size_##T( arr ) ) return arr;                                                          \
+    if ( size <= vec_size_##T( self ) ) return self;                                                        \
     else                                                                                                    \
     {                                                                                                       \
-        return vec_resize_##T( arr, size, 0 );                                                              \
+        return vec_resize_##T( self, size, 0 );                                                             \
     }                                                                                                       \
 }                                                                                                           \
 /* extend the vector by inserting an element at the specified position */                                   \
-T* vec_insert_##T( T* arr, size_t position, T val )                                                         \
+T* vec_insert_##T( T* self, size_t position, T val )                                                        \
 {                                                                                                           \
-    vec_meta *vector = vec_get_meta_##T( arr );                                                             \
+    vec_meta *vector = vec_get_meta_##T( self );                                                            \
     if ( position > vector->size )                                                                          \
     {                                                                                                       \
         fprintf( stderr, "[ERRO]: index out of bounds, aborted\n" );                                        \
@@ -337,16 +337,16 @@ T* vec_insert_##T( T* arr, size_t position, T val )                             
     else                                                                                                    \
     {                                                                                                       \
         vector->size++;                                                                                     \
-        arr = vec_resize_##T( arr, vector->size, 0 );                                                       \
-        memmove( &arr[ position + 1 ], &arr[ position ], ( vector->size - position ) * sizeof ( T ) );      \
-        arr[ position ] = val;                                                                              \
+        self = vec_resize_##T( self, vector->size, 0 );                                                     \
+        memmove( &self[ position + 1 ], &self[ position ], ( vector->size - position ) * sizeof ( T ) );    \
+        self[ position ] = val;                                                                             \
     }                                                                                                       \
-    return arr;                                                                                             \
+    return self;                                                                                            \
 }                                                                                                           \
 /* extend the vector by inserting an array of elements at the specified position */                         \
-T* vec_insert_arr_##T( T* arr, size_t position, T* array, size_t size )                                     \
+T* vec_insert_arr_##T( T* self, size_t position, T* arr, size_t size )                                      \
 {                                                                                                           \
-    vec_meta *vector = vec_get_meta_##T( arr );                                                             \
+    vec_meta *vector = vec_get_meta_##T( self );                                                            \
     if ( position > vector->size )                                                                          \
     {                                                                                                       \
         fprintf( stderr, "[ERRO]: index out of bounds, aborted\n" );                                        \
@@ -355,21 +355,21 @@ T* vec_insert_arr_##T( T* arr, size_t position, T* array, size_t size )         
     else                                                                                                    \
     {                                                                                                       \
         vector->size += size;                                                                               \
-        arr = vec_resize_##T( arr, vector->size, 0 );                                                       \
-        memmove( &arr[ position + size ], &arr[ position ], ( vector->size - position ) * sizeof ( T ) );   \
-        memmove( &arr[ position ], array, size * sizeof ( T ) );                                            \
+        self = vec_resize_##T( self, vector->size, 0 );                                                     \
+        memmove( &self[ position + size ], &self[ position ], ( vector->size - position ) * sizeof ( T ) ); \
+        memmove( &self[ position ], arr, size * sizeof ( T ) );                                             \
     }                                                                                                       \
-    return arr;                                                                                             \
+    return self;                                                                                            \
 }                                                                                                           \
 /* Adds a new element at the end of the vector */                                                           \
-T* vec_push_back_##T( T* arr, T val )                                                                       \
+T* vec_push_back_##T( T* self, T val )                                                                      \
 {                                                                                                           \
-    return vec_insert_##T( arr, vec_size_##T(arr), val );                                                   \
+    return vec_insert_##T( self, vec_size_##T(self), val );                                                 \
 }                                                                                                           \
 /* Removes the last element in the vector, effectively reducing the container size by one */                \
-T* vec_pop_back_##T( T* arr )                                                                               \
+T* vec_pop_back_##T( T* self )                                                                              \
 {                                                                                                           \
-    vec_meta *vector = vec_get_meta_##T( arr );                                                             \
+    vec_meta *vector = vec_get_meta_##T( self );                                                            \
     if ( !vector->size )                                                                                    \
     {                                                                                                       \
         fprintf( stderr, "[ERRO]: empty vector, aborted\n" );                                               \
@@ -378,14 +378,14 @@ T* vec_pop_back_##T( T* arr )                                                   
     else                                                                                                    \
     {                                                                                                       \
         vector->size--;                                                                                     \
-        vec_shrink_to_fit_##T( arr );                                                                       \
-        return arr;                                                                                         \
+        vec_shrink_to_fit_##T( self );                                                                      \
+        return self;                                                                                        \
     }                                                                                                       \
 }                                                                                                           \
 /* free the resources used by the container */                                                              \
-void vec_destroy_##T( T* arr )                                                                              \
+void vec_destroy_##T( T* self )                                                                             \
 {                                                                                                           \
-    vec_meta *vector = vec_get_meta_##T( arr );                                                             \
+    vec_meta *vector = vec_get_meta_##T( self );                                                            \
     free(vector);                                                                                           \
 }                                                                                                           \
 
