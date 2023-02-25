@@ -88,6 +88,7 @@ using_vector(double)
     double*:    vec_insert_arr_double                                                                       \
 ) ( self, position, arr, size )                                                                             \
 
+#define vec_append( self, val ) vec_push_back( self, val )
 #define vec_push_back( self, val ) _Generic( (self),                                                        \
     int*:       vec_push_back_int,                                                                          \
     char*:      vec_push_back_char,                                                                         \
@@ -204,7 +205,7 @@ T* vec_resize_##T( T* self, size_t size, T val )                                
             }                                                                                               \
             else break;                                                                                     \
         }                                                                                                   \
-        while ( cap < 1024 )                                                                                \
+        while ( cap <= 1024 )                                                                                \
         {                                                                                                   \
             if ( cap * 2 < vector->capacity )                                                               \
             {                                                                                               \
@@ -267,7 +268,7 @@ T* vec_assign_##T( T* self, size_t size, T val )                                
             }                                                                                               \
             else break;                                                                                     \
         }                                                                                                   \
-        while ( cap < 1024 )                                                                                \
+        while ( cap <= 1024 )                                                                                \
         {                                                                                                   \
             if ( cap * 2 < vector->capacity )                                                               \
             {                                                                                               \
