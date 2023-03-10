@@ -146,8 +146,8 @@ int main( int argc, char** argv )
     fprintf( fph, ")( self ) \\\n\n" );
 
     // T* vec_reserve( T* self, size_t size );
-    fprintf( fph, "// T* vec_reserve( T* self );\n" );
-    fprintf( fph, "#define vec_reserve( self ) _Generic( (self), \\\n" );
+    fprintf( fph, "// T* vec_reserve( T* self, size_t size );\n" );
+    fprintf( fph, "#define vec_reserve( self, size ) _Generic( (self), \\\n" );
     for ( size_t i = 0; i < size - 1; i++ )
     {
         fprintf( fph, "    %s*: vec_reserve_%s, \\\n", types[i].cstr, types[i].cstr );
@@ -211,10 +211,10 @@ int main( int argc, char** argv )
 
 
     // void vec_free( T* self );
-    fprintf( fph, "// void vec_free( T* self )\n" );
+    fprintf( fph, "// void vec_free( T* self );\n" );
     fprintf( fph, "#define vec_free( self ) vec_destroy( self )\n" );
     // void vec_destroy( T* self );
-    fprintf( fph, "// void vec_destroy_( T* self );\n" );
+    fprintf( fph, "// void vec_destroy( T* self );\n" );
     fprintf( fph, "#define vec_destroy( self ) _Generic( (self), \\\n" );
     for ( size_t i = 0; i < size - 1; i++ )
     {
