@@ -20,7 +20,7 @@ int main( int argc, char** argv )
 {
     if ( argc == 1 )
     {
-        fprintf( stderr, "[usage]: %s <types>\n", argv[0] );
+        fprintf( stderr, "[usage]: %s <types> [optional... output name]\n", argv[0] );
         exit(1);
     }
 
@@ -53,7 +53,7 @@ int main( int argc, char** argv )
             curr++;
             // print man page
             fprintf( stderr, "[usage]: ./%s <type>\n", argv[0] );
-            fprintf( stderr, "          optional arguments:\n" );
+            fprintf( stderr, "    optional arguments:\n" );
             fprintf( stderr, "          -h          print this manual\n" );
             fprintf( stderr, "          -o          specify output file name, will generage \"*.c\" and \"*.h\" file. \n" );
             vec_destroy_cstr( types );
@@ -73,7 +73,7 @@ int main( int argc, char** argv )
     free( file_c );
     free( file_h );
 
-
+    size_t size = vec_size_cstr( types );
 
     // include header .h
     fprintf( fph, "#include \"vector.h\"\n\n" );
@@ -84,7 +84,7 @@ int main( int argc, char** argv )
 
 
     // add using types
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size; i++ )
     {
         fprintf( fph, "using_vector(%s)\n", types[i].cstr );
         fprintf( fpc, "using_vector(%s)\n", types[i].cstr );
@@ -98,115 +98,130 @@ int main( int argc, char** argv )
     // T* vec_resize( T* self, size_t size, T val );
     fprintf( fph, "// T* vec_resize( T* self, size_t size, T val );\n" );
     fprintf( fph, "#define vec_resize( self, size, val ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
     {
         fprintf( fph, "    %s*: vec_resize_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self, size, val ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_resize_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self, size, val ) \\\n\n" );
 
     // T* vec_clear( T* self );
     fprintf( fph, "// T* vec_clear( T* self );\n" );
     fprintf( fph, "#define vec_clear( self ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
     {
-        fprintf( fph, "    %s*: vec_size_%s, \\\n", types[i].cstr, types[i].cstr );
+        fprintf( fph, "    %s*: vec_clear_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_clear_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self ) \\\n\n" );
 
     // T* vec_assign( T* self, size_t size, T val );
     fprintf( fph, "// T* vec_assign( T* self, size_t size, T val );\n" );
     fprintf( fph, "#define vec_assign( self, size, val ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
     {
-        fprintf( fph, "    %s*: vec_assign%s, \\\n", types[i].cstr, types[i].cstr );
+        fprintf( fph, "    %s*: vec_assign_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self, size, val ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_assign_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self, size, val ) \\\n\n" );
 
     // T* vec_back( T* self );
     fprintf( fph, "// T* vec_back( T* self );\n" );
     fprintf( fph, "#define vec_back( self ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
     {
-        fprintf( fph, "    %s*: vec_back%s, \\\n", types[i].cstr, types[i].cstr );
+        fprintf( fph, "    %s*: vec_back_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_back_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self ) \\\n\n" );
 
     // T* vec_shrink_to_fit( T* self );
     fprintf( fph, "// T* vec_shrink_to_fit( T* self );\n" );
     fprintf( fph, "#define vec_shrink_to_fit( self ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
     {
-        fprintf( fph, "    %s*: vec_shrink_to_fit%s, \\\n", types[i].cstr, types[i].cstr );
+        fprintf( fph, "    %s*: vec_shrink_to_fit_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_shrink_to_fit_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self ) \\\n\n" );
 
     // T* vec_reserve( T* self, size_t size );
     fprintf( fph, "// T* vec_reserve( T* self );\n" );
     fprintf( fph, "#define vec_reserve( self ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
     {
-        fprintf( fph, "    %s*: vec_reserve%s, \\\n", types[i].cstr, types[i].cstr );
+        fprintf( fph, "    %s*: vec_reserve_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self, size ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_reserve_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self, size ) \\\n\n" );
 
     // T* vec_insert( T* self, size_t position, T val );
     fprintf( fph, "// T* vec_insert( T* self, size_t position, T val );\n" );
     fprintf( fph, "#define vec_insert( self, position, val ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
     {
-        fprintf( fph, "    %s*: vec_insert%s, \\\n", types[i].cstr, types[i].cstr );
+        fprintf( fph, "    %s*: vec_insert_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self, position, val ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_insert_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self, position, val ) \\\n\n" );
 
     // T* vec_append( T* self, T val );
     fprintf( fph, "// T* vec_append( T* self, T val );\n" );
     fprintf( fph, "#define vec_append( self, val ) vec_push_back( self, val )\n" );
 
     // T* vec_push_back( T* self, T val );
-    fprintf( fph, "// T* vec_push_back( T* self );\n" );
-    fprintf( fph, "#define vec_push_back( self ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    fprintf( fph, "// T* vec_push_back( T* self, T val );\n" );
+    fprintf( fph, "#define vec_push_back( self, val ) _Generic( (self), \\\n" );
+    for ( size_t i = 0; i < size - 1; i++ )
     {
-        fprintf( fph, "    %s*: vec_push_back%s, \\\n", types[i].cstr, types[i].cstr );
+        fprintf( fph, "    %s*: vec_push_back_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self, val ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_push_back_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self, val ) \\\n\n" );
 
     // T* vec_pop_back( T* self );
     fprintf( fph, "// T* vec_pop_back( T* self );\n" );
     fprintf( fph, "#define vec_pop_back( self ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
     {
-        fprintf( fph, "    %s*: vec_pop_back%s, \\\n", types[i].cstr, types[i].cstr );
+        fprintf( fph, "    %s*: vec_pop_back_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_pop_back_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self ) \\\n\n" );
 
     // size_t vec_size( T* self );
     fprintf( fph, "// size_t vec_size( T* self );\n" );
     fprintf( fph, "#define vec_size( self ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
     {
-        fprintf( fph, "    %s*: vec_size%s, \\\n", types[i].cstr, types[i].cstr );
+        fprintf( fph, "    %s*: vec_size_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_size_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self ) \\\n\n" );
 
     // size_t vec_capacity( T* self );
     fprintf( fph, "// size_t vec_capacity( T* self );\n" );
     fprintf( fph, "#define vec_capacity( self ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
     {
-        fprintf( fph, "    %s*: vec_capacity%s, \\\n", types[i].cstr, types[i].cstr );
+        fprintf( fph, "    %s*: vec_capacity_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_capacity_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self ) \\\n\n" );
 
 
+    // void vec_free( T* self );
+    fprintf( fph, "// void vec_free( T* self )\n" );
+    fprintf( fph, "#define vec_free( self ) vec_destroy( self )\n" );
     // void vec_destroy( T* self );
-    fprintf( fph, "// void vec_destroy( T* self );\n" );
+    fprintf( fph, "// void vec_destroy_( T* self );\n" );
     fprintf( fph, "#define vec_destroy( self ) _Generic( (self), \\\n" );
-    for ( size_t i = 0; i < vec_size_cstr( types ); i++ )
+    for ( size_t i = 0; i < size - 1; i++ )
     {
-        fprintf( fph, "    %s*: vec_destroy%s, \\\n", types[i].cstr, types[i].cstr );
+        fprintf( fph, "    %s*: vec_destroy_%s, \\\n", types[i].cstr, types[i].cstr );
     }
-    fprintf( fph, ") ( self ) \\\n\n" );
+    fprintf( fph, "    %s*: vec_destroy_%s \\\n", types[size-1].cstr, types[size-1].cstr );
+    fprintf( fph, ")( self ) \\\n\n" );
 
 
     fclose( fpc );
