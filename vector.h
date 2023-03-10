@@ -205,7 +205,7 @@ T* vec_resize_##T( T* self, size_t size, T val )                                
             }                                                                                               \
             else break;                                                                                     \
         }                                                                                                   \
-        while ( cap <= 1024 )                                                                                \
+        while ( cap <= 1024 )                                                                               \
         {                                                                                                   \
             if ( cap * 2 < vector->capacity )                                                               \
             {                                                                                               \
@@ -268,7 +268,7 @@ T* vec_assign_##T( T* self, size_t size, T val )                                
             }                                                                                               \
             else break;                                                                                     \
         }                                                                                                   \
-        while ( cap <= 1024 )                                                                                \
+        while ( cap <= 1024 )                                                                               \
         {                                                                                                   \
             if ( cap * 2 < vector->capacity )                                                               \
             {                                                                                               \
@@ -315,7 +315,7 @@ size_t vec_capacity_##T( T* self )                                              
 /* Requests the container to reduce its capacity to fit its size */                                         \
 T* vec_shrink_to_fit_##T( T* self )                                                                         \
 {                                                                                                           \
-    return vec_resize_##T( self, vec_size_##T(self), 0 );                                                   \
+    return vec_resize_##T( self, vec_size_##T(self), (T) { 0 } );                                           \
 }                                                                                                           \
 /* Requests that the vector capacity be at least enough to contain size elements */                         \
 T* vec_reserve_##T( T* self, size_t size )                                                                  \
@@ -323,7 +323,7 @@ T* vec_reserve_##T( T* self, size_t size )                                      
     if ( size <= vec_size_##T( self ) ) return self;                                                        \
     else                                                                                                    \
     {                                                                                                       \
-        return vec_resize_##T( self, size, 0 );                                                             \
+        return vec_resize_##T( self, size, (T) { 0 } );                                                     \
     }                                                                                                       \
 }                                                                                                           \
 /* extend the vector by inserting an element at the specified position */                                   \
@@ -338,7 +338,7 @@ T* vec_insert_##T( T* self, size_t position, T val )                            
     else                                                                                                    \
     {                                                                                                       \
         vector->size++;                                                                                     \
-        self = vec_resize_##T( self, vector->size, 0 );                                                     \
+        self = vec_resize_##T( self, vector->size, (T) { 0 } );                                             \
         memmove( &self[ position + 1 ], &self[ position ], ( vector->size - position ) * sizeof ( T ) );    \
         self[ position ] = val;                                                                             \
     }                                                                                                       \
@@ -356,7 +356,7 @@ T* vec_insert_arr_##T( T* self, size_t position, T* arr, size_t size )          
     else                                                                                                    \
     {                                                                                                       \
         vector->size += size;                                                                               \
-        self = vec_resize_##T( self, vector->size, 0 );                                                     \
+        self = vec_resize_##T( self, vector->size, (T) { 0 } );                                             \
         memmove( &self[ position + size ], &self[ position ], ( vector->size - position ) * sizeof ( T ) ); \
         memmove( &self[ position ], arr, size * sizeof ( T ) );                                             \
     }                                                                                                       \
